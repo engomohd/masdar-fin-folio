@@ -14,7 +14,7 @@ export const FinanceTable = ({ entries, onDelete }: FinanceTableProps) => {
   const [deletingId, setDeletingId] = useState<string | null>(null);
 
   const formatNumber = (num: number) => {
-    return new Intl.NumberFormat("ar-SA", {
+    return new Intl.NumberFormat("en-US", {
       minimumFractionDigits: 2,
       maximumFractionDigits: 2,
     }).format(num);
