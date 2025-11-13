@@ -78,6 +78,9 @@ const Report = () => {
     if (filters.location) {
       query = query.eq("location", filters.location);
     }
+    if (filters.search) {
+      query = query.or(`project_name.ilike.%${filters.search}%,amount_net.eq.${parseFloat(filters.search) || 0},amount_gross.eq.${parseFloat(filters.search) || 0}`);
+    }
 
     // Fetch paginated data
     const { data, count, error } = await query.range(
@@ -104,6 +107,9 @@ const Report = () => {
     if (filters.type) summaryQuery = summaryQuery.eq("type", filters.type);
     if (filters.currency) summaryQuery = summaryQuery.eq("currency", filters.currency);
     if (filters.location) summaryQuery = summaryQuery.eq("location", filters.location);
+    if (filters.search) {
+      summaryQuery = summaryQuery.or(`project_name.ilike.%${filters.search}%,amount_net.eq.${parseFloat(filters.search) || 0},amount_gross.eq.${parseFloat(filters.search) || 0}`);
+    }
 
     const { data: summaryData } = await summaryQuery;
 

@@ -22,6 +22,7 @@ export interface FinanceFilters {
   type?: "income" | "expense";
   currency?: string;
   location?: "Saudi Arabia" | "Jordan";
+  search?: string;
 }
 
 export const calculateAmounts = (
