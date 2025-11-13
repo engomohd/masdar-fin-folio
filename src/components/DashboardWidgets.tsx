@@ -10,9 +10,22 @@ interface DashboardWidgetsProps {
     netProfit: number;
     transactionCount: number;
   };
+  period: string;
 }
 
-export const DashboardWidgets = ({ recentEntries, monthlyStats }: DashboardWidgetsProps) => {
+export const DashboardWidgets = ({ recentEntries, monthlyStats, period }: DashboardWidgetsProps) => {
+  const getPeriodLabel = (period: string) => {
+    const labels: Record<string, string> = {
+      current_month: "هذا الشهر",
+      last_month: "الشهر الماضي",
+      last_3_months: "آخر 3 أشهر",
+      last_6_months: "آخر 6 أشهر",
+      current_year: "هذه السنة",
+      last_year: "السنة الماضية",
+    };
+    return labels[period] || "هذا الشهر";
+  };
+
   const formatNumber = (num: number) => {
     return new Intl.NumberFormat("en-US", {
       minimumFractionDigits: 2,
@@ -34,7 +47,7 @@ export const DashboardWidgets = ({ recentEntries, monthlyStats }: DashboardWidge
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Calendar className="h-5 w-5" />
-            إحصائيات هذا الشهر
+            إحصائيات {getPeriodLabel(period)}
           </CardTitle>
         </CardHeader>
         <CardContent>

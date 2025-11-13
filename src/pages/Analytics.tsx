@@ -170,6 +170,18 @@ const Analytics = () => {
 
   const COLORS = ["#22c55e", "#ef4444"];
 
+  const getPeriodChartLabel = (period: Period) => {
+    const labels: Record<Period, string> = {
+      current_month: "الشهر الحالي",
+      last_month: "الشهر الماضي",
+      last_3_months: "آخر 3 أشهر",
+      last_6_months: "آخر 6 أشهر",
+      current_year: "السنة الحالية",
+      last_year: "السنة الماضية",
+    };
+    return labels[period];
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-secondary/5 to-primary/5" dir="rtl">
       <div className="container mx-auto p-4 md:p-6 max-w-7xl space-y-6">
@@ -212,14 +224,14 @@ const Analytics = () => {
         </div>
 
         {/* Dashboard Widgets */}
-        <DashboardWidgets recentEntries={entries} monthlyStats={monthlyStats} />
+        <DashboardWidgets recentEntries={entries} monthlyStats={monthlyStats} period={period} />
 
         {/* Charts Section */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {/* Bar Chart - Monthly Trends */}
           <Card className="col-span-full">
             <CardHeader>
-              <CardTitle>تحليل الإيرادات والمصروفات (آخر 6 أشهر)</CardTitle>
+              <CardTitle>تحليل الإيرادات والمصروفات ({getPeriodChartLabel(period)})</CardTitle>
             </CardHeader>
             <CardContent>
               <ResponsiveContainer width="100%" height={300}>
