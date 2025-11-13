@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { getAuthState, FinanceEntry } from "@/lib/supabase";
@@ -9,10 +10,13 @@ import { DashboardWidgets } from "@/components/DashboardWidgets";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, LineChart, Line, PieChart, Pie, Cell } from "recharts";
 import masdarLogo from "@/assets/masdar-logo.png";
 
+type Period = "current_month" | "last_month" | "last_3_months" | "last_6_months" | "current_year" | "last_year";
+
 const Analytics = () => {
   const navigate = useNavigate();
   const [userId, setUserId] = useState<string | null>(null);
   const [entries, setEntries] = useState<FinanceEntry[]>([]);
+  const [period, setPeriod] = useState<Period>("current_month");
   const [monthlyStats, setMonthlyStats] = useState({
     totalIncome: 0,
     totalExpense: 0,
@@ -48,16 +52,50 @@ const Analytics = () => {
     if (userId) {
       fetchData();
     }
-  }, [userId]);
+  }, [userId, period]);
 
   const fetchData = async () => {
     if (!userId) return;
 
-    // Fetch all entries
+    // Calculate date range based on period
+    const now = new Date();
+    let dateFrom = "";
+    let dateTo = "";
+
+    switch (period) {
+      case "current_month":
+        dateFrom = new Date(now.getFullYear(), now.getMonth(), 1).toISOString().split('T')[0];
+        dateTo = new Date(now.getFullYear(), now.getMonth() + 1, 0).toISOString().split('T')[0];
+        break;
+      case "last_month":
+        dateFrom = new Date(now.getFullYear(), now.getMonth() - 1, 1).toISOString().split('T')[0];
+        dateTo = new Date(now.getFullYear(), now.getMonth(), 0).toISOString().split('T')[0];
+        break;
+      case "last_3_months":
+        dateFrom = new Date(now.getFullYear(), now.getMonth() - 2, 1).toISOString().split('T')[0];
+        dateTo = new Date(now.getFullYear(), now.getMonth() + 1, 0).toISOString().split('T')[0];
+        break;
+      case "last_6_months":
+        dateFrom = new Date(now.getFullYear(), now.getMonth() - 5, 1).toISOString().split('T')[0];
+        dateTo = new Date(now.getFullYear(), now.getMonth() + 1, 0).toISOString().split('T')[0];
+        break;
+      case "current_year":
+        dateFrom = new Date(now.getFullYear(), 0, 1).toISOString().split('T')[0];
+        dateTo = new Date(now.getFullYear(), 11, 31).toISOString().split('T')[0];
+        break;
+      case "last_year":
+        dateFrom = new Date(now.getFullYear() - 1, 0, 1).toISOString().split('T')[0];
+        dateTo = new Date(now.getFullYear() - 1, 11, 31).toISOString().split('T')[0];
+        break;
+    }
+
+    // Fetch entries for the selected period
     const { data, error } = await supabase
       .from("finance_entries")
       .select("*")
       .eq("user_id", userId)
+      .gte("date", dateFrom)
+      .lte("date", dateTo)
       .order("date", { ascending: true });
 
     if (error) {
@@ -67,23 +105,19 @@ const Analytics = () => {
 
     setEntries((data as FinanceEntry[]) || []);
 
-    // Calculate monthly stats (current month)
-    const now = new Date();
-    const firstDayOfMonth = new Date(now.getFullYear(), now.getMonth(), 1).toISOString().split('T')[0];
-    const lastDayOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0).toISOString().split('T')[0];
-
-    const monthlyData = (data as FinanceEntry[]).filter(
-      (e) => e.date >= firstDayOfMonth && e.date <= lastDayOfMonth && e.status !== "غير مدفوع"
+    // Calculate stats for the selected period
+    const periodData = (data as FinanceEntry[]).filter(
+      (e) => e.status !== "غير مدفوع"
     );
 
-    const totalIncome = monthlyData
+    const totalIncome = periodData
       .filter((e) => e.type === "income")
       .reduce((sum, e) => sum + Number(e.amount_net), 0);
-    const totalExpense = monthlyData
+    const totalExpense = periodData
       .filter((e) => e.type === "expense")
       .reduce((sum, e) => sum + Number(e.amount_net), 0);
     const netProfit = totalIncome - totalExpense;
-    const transactionCount = monthlyData.length;
+    const transactionCount = periodData.length;
 
     setMonthlyStats({ totalIncome, totalExpense, netProfit, transactionCount });
 
@@ -154,6 +188,26 @@ const Analytics = () => {
             <Link to="/deleted-log">
               <Button variant="outline">سجل المحذوفات</Button>
             </Link>
+          </div>
+        </div>
+
+        {/* Period Selector */}
+        <div className="bg-card rounded-lg p-4 shadow-sm">
+          <div className="flex items-center gap-4">
+            <label className="text-sm font-medium">الفترة الزمنية:</label>
+            <Select value={period} onValueChange={(value) => setPeriod(value as Period)}>
+              <SelectTrigger className="w-[200px]">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="current_month">الشهر الحالي</SelectItem>
+                <SelectItem value="last_month">الشهر الماضي</SelectItem>
+                <SelectItem value="last_3_months">آخر 3 أشهر</SelectItem>
+                <SelectItem value="last_6_months">آخر 6 أشهر</SelectItem>
+                <SelectItem value="current_year">السنة الحالية</SelectItem>
+                <SelectItem value="last_year">السنة الماضية</SelectItem>
+              </SelectContent>
+            </Select>
           </div>
         </div>
 
