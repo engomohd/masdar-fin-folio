@@ -81,7 +81,7 @@ const DeletedLog = () => {
   };
 
   const formatDateTime = (date: string) => {
-    return new Date(date).toLocaleString("ar-SA");
+    return new Date(date).toLocaleString("en-US");
   };
 
   return (
