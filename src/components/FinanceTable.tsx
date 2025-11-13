@@ -20,6 +20,10 @@ export const FinanceTable = ({ entries, onDelete }: FinanceTableProps) => {
     }).format(num);
   };
 
+  const convertToJOD = (amountSAR: number) => {
+    return amountSAR / 5.4;
+  };
+
   const handleDelete = async (entry: FinanceEntry) => {
     if (!confirm("هل أنت متأكد من حذف هذه العملية؟")) return;
     
@@ -47,6 +51,7 @@ export const FinanceTable = ({ entries, onDelete }: FinanceTableProps) => {
               <TableHead className="text-center font-bold text-primary">العملة</TableHead>
               <TableHead className="text-center font-bold text-primary">الموقع</TableHead>
               <TableHead className="text-center font-bold text-primary">المبلغ (SAR)</TableHead>
+              <TableHead className="text-center font-bold text-primary">المبلغ (JOD)</TableHead>
               <TableHead className="text-center font-bold text-primary">ضريبة</TableHead>
               <TableHead className="text-center font-bold text-primary">شامل</TableHead>
               <TableHead className="text-center font-bold text-primary">الحالة</TableHead>
@@ -56,7 +61,7 @@ export const FinanceTable = ({ entries, onDelete }: FinanceTableProps) => {
           <TableBody>
             {entries.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={onDelete ? 10 : 9} className="text-center text-muted-foreground py-8">
+                <TableCell colSpan={onDelete ? 11 : 10} className="text-center text-muted-foreground py-8">
                   لا توجد عمليات مسجلة
                 </TableCell>
               </TableRow>
@@ -73,6 +78,7 @@ export const FinanceTable = ({ entries, onDelete }: FinanceTableProps) => {
                   <TableCell className="text-center">{entry.currency}</TableCell>
                   <TableCell className="text-center">{entry.location === "Saudi Arabia" ? "السعودية" : "الأردن"}</TableCell>
                   <TableCell className="text-center font-mono">{formatNumber(entry.amount_net)}</TableCell>
+                  <TableCell className="text-center font-mono">{formatNumber(convertToJOD(entry.amount_net))}</TableCell>
                   <TableCell className="text-center font-mono">{formatNumber(entry.vat_amount)}</TableCell>
                   <TableCell className="text-center font-mono">{formatNumber(entry.amount_gross)}</TableCell>
                   <TableCell className="text-center">
