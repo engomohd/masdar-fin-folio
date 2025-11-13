@@ -32,26 +32,26 @@ const Auth = () => {
     if (error) {
       toast.error(error.message);
     } else {
-      toast.success("Successfully signed in");
+      toast.success("تم تسجيل الدخول بنجاح");
       navigate("/");
     }
     setLoading(false);
   };
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-background via-secondary/5 to-primary/5 p-4">
+    <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-background via-secondary/5 to-primary/5 p-4" dir="rtl">
       <Card className="w-full max-w-md shadow-xl">
         <CardHeader className="space-y-4 text-center">
           <div className="flex justify-center">
             <img src={masdarLogo} alt="Masdar Logo" className="h-32 w-auto" />
           </div>
-          <CardTitle className="text-2xl font-bold text-primary">Financial Management System</CardTitle>
-          <CardDescription>Sign in to access the system</CardDescription>
+          <CardTitle className="text-2xl font-bold text-primary">نظام الإدارة المالية</CardTitle>
+          <CardDescription>سجل الدخول للوصول إلى النظام</CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSignIn} className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="username">Username</Label>
+              <Label htmlFor="username">اسم المستخدم</Label>
               <Input
                 id="username"
                 type="text"
@@ -62,7 +62,7 @@ const Auth = () => {
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="password">Password</Label>
+              <Label htmlFor="password">كلمة المرور</Label>
               <Input
                 id="password"
                 type="password"
@@ -72,7 +72,7 @@ const Auth = () => {
               />
             </div>
             <Button type="submit" className="w-full" disabled={loading}>
-              {loading ? "Signing in..." : "Sign In"}
+              {loading ? "جاري تسجيل الدخول..." : "تسجيل الدخول"}
             </Button>
           </form>
         </CardContent>

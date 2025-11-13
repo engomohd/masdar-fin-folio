@@ -56,7 +56,7 @@ const DeletedLog = () => {
   };
 
   const handlePermanentDelete = async (id: string) => {
-    if (!confirm("Are you sure you want to permanently delete this entry? This action cannot be undone.")) return;
+    if (!confirm("هل أنت متأكد من حذف هذه العملية نهائياً؟ لا يمكن التراجع عن هذا الإجراء.")) return;
     
     setDeletingId(id);
     const { error } = await supabase
@@ -67,37 +67,37 @@ const DeletedLog = () => {
     if (error) {
       toast.error(error.message);
     } else {
-      toast.success("Entry permanently deleted");
+      toast.success("تم الحذف النهائي للعملية");
       fetchDeletedEntries();
     }
     setDeletingId(null);
   };
 
   const formatNumber = (num: number) => {
-    return new Intl.NumberFormat("en-US", {
+    return new Intl.NumberFormat("ar-SA", {
       minimumFractionDigits: 2,
       maximumFractionDigits: 2,
     }).format(num);
   };
 
   const formatDateTime = (date: string) => {
-    return new Date(date).toLocaleString("en-US");
+    return new Date(date).toLocaleString("ar-SA");
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-secondary/5 to-primary/5">
+    <div className="min-h-screen bg-gradient-to-br from-background via-secondary/5 to-primary/5" dir="rtl">
       <div className="container mx-auto p-4 md:p-6 max-w-7xl">
         <div className="flex items-center justify-between mb-6">
           <div className="flex items-center gap-4">
             <img src={masdarLogo} alt="Masdar Logo" className="h-16 w-auto" />
-            <h1 className="text-3xl font-bold text-primary">Deleted Entries Log</h1>
+            <h1 className="text-3xl font-bold text-primary">سجل العمليات المحذوفة</h1>
           </div>
           <div className="flex gap-2">
             <Link to="/">
-              <Button variant="outline">Dashboard</Button>
+              <Button variant="outline">لوحة التحكم</Button>
             </Link>
             <Link to="/report">
-              <Button variant="outline">Report</Button>
+              <Button variant="outline">التقارير</Button>
             </Link>
           </div>
         </div>
@@ -107,30 +107,30 @@ const DeletedLog = () => {
             <Table>
               <TableHeader>
                 <TableRow className="bg-primary/5">
-                  <TableHead className="text-center font-bold text-primary">Date</TableHead>
-                  <TableHead className="text-center font-bold text-primary">Project</TableHead>
-                  <TableHead className="text-center font-bold text-primary">Type</TableHead>
-                  <TableHead className="text-center font-bold text-primary">Currency</TableHead>
-                  <TableHead className="text-center font-bold text-primary">Location</TableHead>
-                  <TableHead className="text-center font-bold text-primary">Amount (SAR)</TableHead>
-                  <TableHead className="text-center font-bold text-primary">VAT</TableHead>
-                  <TableHead className="text-center font-bold text-primary">Gross</TableHead>
-                  <TableHead className="text-center font-bold text-primary">Status</TableHead>
-                  <TableHead className="text-center font-bold text-primary">Deleted At</TableHead>
-                  <TableHead className="text-center font-bold text-primary">Actions</TableHead>
+                  <TableHead className="text-center font-bold text-primary">تاريخ</TableHead>
+                  <TableHead className="text-center font-bold text-primary">المشروع</TableHead>
+                  <TableHead className="text-center font-bold text-primary">النوع</TableHead>
+                  <TableHead className="text-center font-bold text-primary">العملة</TableHead>
+                  <TableHead className="text-center font-bold text-primary">الموقع</TableHead>
+                  <TableHead className="text-center font-bold text-primary">المبلغ (SAR)</TableHead>
+                  <TableHead className="text-center font-bold text-primary">ضريبة</TableHead>
+                  <TableHead className="text-center font-bold text-primary">شامل</TableHead>
+                  <TableHead className="text-center font-bold text-primary">الحالة</TableHead>
+                  <TableHead className="text-center font-bold text-primary">تاريخ الحذف</TableHead>
+                  <TableHead className="text-center font-bold text-primary">إجراءات</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {loading ? (
                   <TableRow>
                     <TableCell colSpan={11} className="text-center py-8">
-                      Loading...
+                      جاري التحميل...
                     </TableCell>
                   </TableRow>
                 ) : entries.length === 0 ? (
                   <TableRow>
                     <TableCell colSpan={11} className="text-center text-muted-foreground py-8">
-                      No deleted entries
+                      لا توجد عمليات محذوفة
                     </TableCell>
                   </TableRow>
                 ) : (
@@ -140,11 +140,11 @@ const DeletedLog = () => {
                       <TableCell className="text-center">{entry.project_name}</TableCell>
                       <TableCell className="text-center">
                         <span className={entry.type === "income" ? "text-green-600 font-medium" : "text-red-600 font-medium"}>
-                          {entry.type === "income" ? "Income" : "Expense"}
+                          {entry.type === "income" ? "إيراد" : "مصروف"}
                         </span>
                       </TableCell>
                       <TableCell className="text-center">{entry.currency}</TableCell>
-                      <TableCell className="text-center">{entry.location}</TableCell>
+                      <TableCell className="text-center">{entry.location === "Saudi Arabia" ? "السعودية" : "الأردن"}</TableCell>
                       <TableCell className="text-center font-mono">{formatNumber(entry.amount_net)}</TableCell>
                       <TableCell className="text-center font-mono">{formatNumber(entry.vat_amount)}</TableCell>
                       <TableCell className="text-center font-mono">{formatNumber(entry.amount_gross)}</TableCell>

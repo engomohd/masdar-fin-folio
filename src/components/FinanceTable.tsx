@@ -14,14 +14,14 @@ export const FinanceTable = ({ entries, onDelete }: FinanceTableProps) => {
   const [deletingId, setDeletingId] = useState<string | null>(null);
 
   const formatNumber = (num: number) => {
-    return new Intl.NumberFormat("en-US", {
+    return new Intl.NumberFormat("ar-SA", {
       minimumFractionDigits: 2,
       maximumFractionDigits: 2,
     }).format(num);
   };
 
   const handleDelete = async (entry: FinanceEntry) => {
-    if (!confirm("Are you sure you want to delete this entry?")) return;
+    if (!confirm("هل أنت متأكد من حذف هذه العملية؟")) return;
     
     setDeletingId(entry.id);
     const { error } = await deleteEntry(entry.id, entry);
@@ -29,35 +29,35 @@ export const FinanceTable = ({ entries, onDelete }: FinanceTableProps) => {
     if (error) {
       toast.error(error.message);
     } else {
-      toast.success("Entry deleted successfully");
+      toast.success("تم حذف العملية بنجاح");
       onDelete?.();
     }
     setDeletingId(null);
   };
 
   return (
-    <div className="rounded-lg border bg-card shadow-sm overflow-hidden">
+    <div className="rounded-lg border bg-card shadow-sm overflow-hidden" dir="rtl">
       <div className="overflow-x-auto">
         <Table>
           <TableHeader>
             <TableRow className="bg-primary/5">
-              <TableHead className="text-center font-bold text-primary">Date</TableHead>
-              <TableHead className="text-center font-bold text-primary">Project</TableHead>
-              <TableHead className="text-center font-bold text-primary">Type</TableHead>
-              <TableHead className="text-center font-bold text-primary">Currency</TableHead>
-              <TableHead className="text-center font-bold text-primary">Location</TableHead>
-              <TableHead className="text-center font-bold text-primary">Amount (SAR)</TableHead>
-              <TableHead className="text-center font-bold text-primary">VAT</TableHead>
-              <TableHead className="text-center font-bold text-primary">Gross</TableHead>
-              <TableHead className="text-center font-bold text-primary">Status</TableHead>
-              {onDelete && <TableHead className="text-center font-bold text-primary">Actions</TableHead>}
+              <TableHead className="text-center font-bold text-primary">تاريخ</TableHead>
+              <TableHead className="text-center font-bold text-primary">المشروع</TableHead>
+              <TableHead className="text-center font-bold text-primary">النوع</TableHead>
+              <TableHead className="text-center font-bold text-primary">العملة</TableHead>
+              <TableHead className="text-center font-bold text-primary">الموقع</TableHead>
+              <TableHead className="text-center font-bold text-primary">المبلغ (SAR)</TableHead>
+              <TableHead className="text-center font-bold text-primary">ضريبة</TableHead>
+              <TableHead className="text-center font-bold text-primary">شامل</TableHead>
+              <TableHead className="text-center font-bold text-primary">الحالة</TableHead>
+              {onDelete && <TableHead className="text-center font-bold text-primary">إجراءات</TableHead>}
             </TableRow>
           </TableHeader>
           <TableBody>
             {entries.length === 0 ? (
               <TableRow>
                 <TableCell colSpan={onDelete ? 10 : 9} className="text-center text-muted-foreground py-8">
-                  No entries found
+                  لا توجد عمليات مسجلة
                 </TableCell>
               </TableRow>
             ) : (
@@ -67,11 +67,11 @@ export const FinanceTable = ({ entries, onDelete }: FinanceTableProps) => {
                   <TableCell className="text-center">{entry.project_name}</TableCell>
                   <TableCell className="text-center">
                     <span className={entry.type === "income" ? "text-green-600 font-medium" : "text-red-600 font-medium"}>
-                      {entry.type === "income" ? "Income" : "Expense"}
+                      {entry.type === "income" ? "إيراد" : "مصروف"}
                     </span>
                   </TableCell>
                   <TableCell className="text-center">{entry.currency}</TableCell>
-                  <TableCell className="text-center">{entry.location}</TableCell>
+                  <TableCell className="text-center">{entry.location === "Saudi Arabia" ? "السعودية" : "الأردن"}</TableCell>
                   <TableCell className="text-center font-mono">{formatNumber(entry.amount_net)}</TableCell>
                   <TableCell className="text-center font-mono">{formatNumber(entry.vat_amount)}</TableCell>
                   <TableCell className="text-center font-mono">{formatNumber(entry.amount_gross)}</TableCell>

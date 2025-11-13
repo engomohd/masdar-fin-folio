@@ -86,7 +86,7 @@ const Report = () => {
     );
 
     if (error) {
-      toast.error("Failed to load data: " + error.message);
+      toast.error("فشل في تحميل البيانات: " + error.message);
     } else {
       setEntries((data as FinanceEntry[]) || []);
       setTotalPages(Math.ceil((count || 0) / itemsPerPage));
@@ -131,19 +131,19 @@ const Report = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-secondary/5 to-primary/5">
+    <div className="min-h-screen bg-gradient-to-br from-background via-secondary/5 to-primary/5" dir="rtl">
       <div className="container mx-auto p-4 space-y-6">
         <div className="flex items-center justify-between bg-card rounded-lg p-4 shadow-sm">
           <div className="flex items-center gap-4">
             <img src={masdarLogo} alt="Masdar Logo" className="h-16 w-auto" />
-            <h1 className="text-3xl font-bold text-primary">Income & Expense Report</h1>
+            <h1 className="text-3xl font-bold text-primary">تقرير الإيرادات والمصروفات</h1>
           </div>
           <div className="flex gap-2">
             <Link to="/">
-              <Button variant="outline">Dashboard</Button>
+              <Button variant="outline">لوحة التحكم</Button>
             </Link>
             <Link to="/deleted-log">
-              <Button variant="outline">Deleted Log</Button>
+              <Button variant="outline">سجل المحذوفات</Button>
             </Link>
           </div>
         </div>

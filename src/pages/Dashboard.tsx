@@ -87,7 +87,7 @@ const Dashboard = () => {
     );
 
     if (error) {
-      toast.error("Failed to load data: " + error.message);
+      toast.error("فشل في تحميل البيانات: " + error.message);
     } else {
       setEntries((data as FinanceEntry[]) || []);
       setTotalPages(Math.ceil((count || 0) / itemsPerPage));
@@ -146,17 +146,17 @@ const Dashboard = () => {
         <div className="flex items-center justify-between bg-card rounded-lg p-4 shadow-sm">
           <div className="flex items-center gap-4">
             <img src={masdarLogo} alt="Masdar Logo" className="h-16 w-auto" />
-            <h1 className="text-3xl font-bold text-primary">Financial Dashboard</h1>
+            <h1 className="text-3xl font-bold text-primary">لوحة التحكم المالية</h1>
           </div>
           <div className="flex gap-2">
             <Link to="/report">
-              <Button variant="outline">Report</Button>
+              <Button variant="outline">تقرير</Button>
             </Link>
             <Link to="/deleted-log">
-              <Button variant="outline">Deleted Log</Button>
+              <Button variant="outline">سجل المحذوفات</Button>
             </Link>
             <Button variant="outline" onClick={handleSignOut}>
-              Sign Out
+              تسجيل خروج
             </Button>
           </div>
         </div>
