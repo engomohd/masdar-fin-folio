@@ -96,6 +96,9 @@ const DeletedLog = () => {
             <Link to="/">
               <Button variant="outline">لوحة التحكم</Button>
             </Link>
+            <Link to="/analytics">
+              <Button variant="outline">التحليلات</Button>
+            </Link>
             <Link to="/report">
               <Button variant="outline">التقارير</Button>
             </Link>

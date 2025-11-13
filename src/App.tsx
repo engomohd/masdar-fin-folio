@@ -6,6 +6,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Dashboard from "./pages/Dashboard";
 import Auth from "./pages/Auth";
 import Report from "./pages/Report";
+import Analytics from "./pages/Analytics";
 import DeletedLog from "./pages/DeletedLog";
 import NotFound from "./pages/NotFound";
 
@@ -21,6 +22,7 @@ const App = () => (
           <Route path="/" element={<Dashboard />} />
           <Route path="/auth" element={<Auth />} />
           <Route path="/report" element={<Report />} />
+          <Route path="/analytics" element={<Analytics />} />
           <Route path="/deleted-log" element={<DeletedLog />} />
           <Route path="*" element={<NotFound />} />
         </Routes>

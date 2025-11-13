@@ -145,6 +145,9 @@ const Report = () => {
             <h1 className="text-3xl font-bold text-primary">تقرير الإيرادات والمصروفات</h1>
           </div>
           <div className="flex gap-2">
+            <Link to="/analytics">
+              <Button variant="outline">التحليلات</Button>
+            </Link>
             <Link to="/">
               <Button variant="outline">لوحة التحكم</Button>
             </Link>

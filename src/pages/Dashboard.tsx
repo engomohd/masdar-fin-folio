@@ -9,7 +9,6 @@ import { AddEntryForm } from "@/components/AddEntryForm";
 import { FinanceTable } from "@/components/FinanceTable";
 import { FinanceSummary } from "@/components/FinanceSummary";
 import { Pagination } from "@/components/Pagination";
-import { DashboardWidgets } from "@/components/DashboardWidgets";
 import masdarLogo from "@/assets/masdar-logo.png";
 
 const Dashboard = () => {
@@ -24,12 +23,6 @@ const Dashboard = () => {
     incomeVat: 0,
     expenseNet: 0,
     expenseVat: 0,
-  });
-  const [monthlyStats, setMonthlyStats] = useState({
-    totalIncome: 0,
-    totalExpense: 0,
-    netProfit: 0,
-    transactionCount: 0,
   });
   const itemsPerPage = 10;
 
@@ -139,32 +132,6 @@ const Dashboard = () => {
 
       setSummary({ incomeNet, incomeVat, expenseNet, expenseVat });
     }
-
-    // Fetch monthly stats (current month only)
-    const now = new Date();
-    const firstDayOfMonth = new Date(now.getFullYear(), now.getMonth(), 1).toISOString().split('T')[0];
-    const lastDayOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0).toISOString().split('T')[0];
-
-    const { data: monthlyData } = await supabase
-      .from("finance_entries")
-      .select("type, amount_net")
-      .eq("user_id", userId)
-      .gte("date", firstDayOfMonth)
-      .lte("date", lastDayOfMonth)
-      .neq("status", "غير مدفوع");
-
-    if (monthlyData) {
-      const totalIncome = monthlyData
-        .filter((e) => e.type === "income")
-        .reduce((sum, e) => sum + Number(e.amount_net), 0);
-      const totalExpense = monthlyData
-        .filter((e) => e.type === "expense")
-        .reduce((sum, e) => sum + Number(e.amount_net), 0);
-      const netProfit = totalIncome - totalExpense;
-      const transactionCount = monthlyData.length;
-
-      setMonthlyStats({ totalIncome, totalExpense, netProfit, transactionCount });
-    }
   };
 
   const handleSignOut = async () => {
@@ -190,6 +157,9 @@ const Dashboard = () => {
             <h1 className="text-3xl font-bold text-primary">لوحة التحكم المالية</h1>
           </div>
           <div className="flex gap-2">
+            <Link to="/analytics">
+              <Button variant="outline">التحليلات</Button>
+            </Link>
             <Link to="/report">
               <Button variant="outline">تقرير</Button>
             </Link>
@@ -204,9 +174,6 @@ const Dashboard = () => {
 
         {/* Filters */}
         <FinanceFilters filters={filters} onFilterChange={setFilters} onClear={handleClearFilters} />
-
-        {/* Dashboard Widgets */}
-        <DashboardWidgets recentEntries={entries} monthlyStats={monthlyStats} />
 
         {/* Add Entry Form */}
         {userId && <AddEntryForm userId={userId} onSuccess={fetchData} />}
