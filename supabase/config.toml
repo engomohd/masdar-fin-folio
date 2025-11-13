@@ -1,1 +1,7 @@
 project_id = "mwyzhymodlejvqwiufrv"
+
+[functions.provision-user]
+verify_jwt = false
+
+[functions.reset-users]
+verify_jwt = false
