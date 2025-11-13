@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
@@ -9,7 +9,6 @@ import { FinanceTable } from "@/components/FinanceTable";
 import { FinanceSummary } from "@/components/FinanceSummary";
 import { Pagination } from "@/components/Pagination";
 import masdarLogo from "@/assets/masdar-logo.png";
-import { ArrowLeft } from "lucide-react";
 
 const Report = () => {
   const navigate = useNavigate();
@@ -87,7 +86,7 @@ const Report = () => {
     );
 
     if (error) {
-      toast.error("فشل في تحميل البيانات: " + error.message);
+      toast.error("Failed to load data: " + error.message);
     } else {
       setEntries((data as FinanceEntry[]) || []);
       setTotalPages(Math.ceil((count || 0) / itemsPerPage));
@@ -132,18 +131,21 @@ const Report = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-secondary/5 to-primary/5" dir="rtl">
+    <div className="min-h-screen bg-gradient-to-br from-background via-secondary/5 to-primary/5">
       <div className="container mx-auto p-4 space-y-6">
-        {/* Header */}
         <div className="flex items-center justify-between bg-card rounded-lg p-4 shadow-sm">
           <div className="flex items-center gap-4">
             <img src={masdarLogo} alt="Masdar Logo" className="h-16 w-auto" />
-            <h1 className="text-3xl font-bold text-primary">تقرير الإيرادات والمصروفات</h1>
+            <h1 className="text-3xl font-bold text-primary">Income & Expense Report</h1>
           </div>
-          <Button variant="outline" onClick={() => navigate("/")} className="gap-2">
-            <ArrowLeft className="h-4 w-4" />
-            العودة للوحة التحكم
-          </Button>
+          <div className="flex gap-2">
+            <Link to="/">
+              <Button variant="outline">Dashboard</Button>
+            </Link>
+            <Link to="/deleted-log">
+              <Button variant="outline">Deleted Log</Button>
+            </Link>
+          </div>
         </div>
 
         {/* Filters */}

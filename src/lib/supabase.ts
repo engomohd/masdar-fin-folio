@@ -54,12 +54,56 @@ export const calculateAmounts = (
   return { sar_net, vat, gross };
 };
 
-export const signIn = async (email: string, password: string) => {
+export const signIn = async (username: string, password: string) => {
+  // Look up email from username
+  const { data: profile } = await supabase
+    .from('profiles')
+    .select('email')
+    .eq('username', username)
+    .single();
+  
+  if (!profile?.email) {
+    return { error: { message: 'Invalid username or password' } as any };
+  }
+
   const { error } = await supabase.auth.signInWithPassword({
-    email,
+    email: profile.email,
     password,
   });
   return { error };
+};
+
+export const deleteEntry = async (entryId: string, entry: FinanceEntry) => {
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return { error: { message: 'Not authenticated' } as any };
+
+  // Insert into deleted_entries
+  const { error: insertError } = await supabase
+    .from('deleted_entries')
+    .insert({
+      original_entry_id: entryId,
+      user_id: entry.user_id,
+      date: entry.date,
+      project_name: entry.project_name,
+      type: entry.type,
+      currency: entry.currency,
+      amount_net: entry.amount_net,
+      vat_amount: entry.vat_amount,
+      amount_gross: entry.amount_gross,
+      status: entry.status,
+      location: entry.location,
+      deleted_by: user.id,
+    });
+
+  if (insertError) return { error: insertError };
+
+  // Delete from finance_entries
+  const { error: deleteError } = await supabase
+    .from('finance_entries')
+    .delete()
+    .eq('id', entryId);
+
+  return { error: deleteError };
 };
 
 export const signUp = async (email: string, password: string) => {

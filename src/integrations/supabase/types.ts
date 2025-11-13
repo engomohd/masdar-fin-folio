@@ -14,6 +14,72 @@ export type Database = {
   }
   public: {
     Tables: {
+      deleted_entries: {
+        Row: {
+          amount_gross: number
+          amount_net: number
+          currency: string
+          date: string
+          deleted_at: string
+          deleted_by: string
+          id: string
+          location: string
+          original_entry_id: string
+          project_name: string
+          status: string
+          type: string
+          user_id: string
+          vat_amount: number
+        }
+        Insert: {
+          amount_gross: number
+          amount_net: number
+          currency: string
+          date: string
+          deleted_at?: string
+          deleted_by: string
+          id?: string
+          location: string
+          original_entry_id: string
+          project_name: string
+          status: string
+          type: string
+          user_id: string
+          vat_amount?: number
+        }
+        Update: {
+          amount_gross?: number
+          amount_net?: number
+          currency?: string
+          date?: string
+          deleted_at?: string
+          deleted_by?: string
+          id?: string
+          location?: string
+          original_entry_id?: string
+          project_name?: string
+          status?: string
+          type?: string
+          user_id?: string
+          vat_amount?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "deleted_entries_deleted_by_fkey"
+            columns: ["deleted_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "deleted_entries_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       finance_entries: {
         Row: {
           amount_gross: number
@@ -72,16 +138,19 @@ export type Database = {
           created_at: string
           email: string | null
           id: string
+          username: string | null
         }
         Insert: {
           created_at?: string
           email?: string | null
           id: string
+          username?: string | null
         }
         Update: {
           created_at?: string
           email?: string | null
           id?: string
+          username?: string | null
         }
         Relationships: []
       }
