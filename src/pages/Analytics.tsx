@@ -92,7 +92,7 @@ const Analytics = () => {
     for (let i = 5; i >= 0; i--) {
       const date = new Date(now.getFullYear(), now.getMonth() - i, 1);
       months.push({
-        month: date.toLocaleDateString("ar-SA", { month: "short", year: "numeric" }),
+        month: date.toLocaleDateString("en-US", { month: "short", year: "numeric" }),
         firstDay: new Date(date.getFullYear(), date.getMonth(), 1).toISOString().split('T')[0],
         lastDay: new Date(date.getFullYear(), date.getMonth() + 1, 0).toISOString().split('T')[0],
       });

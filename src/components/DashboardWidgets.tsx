@@ -21,7 +21,7 @@ export const DashboardWidgets = ({ recentEntries, monthlyStats }: DashboardWidge
   };
 
   const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString("ar-SA", {
+    return new Date(dateString).toLocaleDateString("en-US", {
       month: "short",
       day: "numeric",
     });
