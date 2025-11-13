@@ -54,20 +54,9 @@ export const calculateAmounts = (
   return { sar_net, vat, gross };
 };
 
-export const signIn = async (username: string, password: string) => {
-  // Look up email from username
-  const { data: profile } = await supabase
-    .from('profiles')
-    .select('email')
-    .eq('username', username)
-    .single();
-  
-  if (!profile?.email) {
-    return { error: { message: 'Invalid username or password' } as any };
-  }
-
+export const signIn = async (email: string, password: string) => {
   const { error } = await supabase.auth.signInWithPassword({
-    email: profile.email,
+    email,
     password,
   });
   return { error };

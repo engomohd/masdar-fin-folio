@@ -30,7 +30,7 @@ const Auth = () => {
     e.preventDefault();
     setLoading(true);
 
-    const { error } = await signIn(username, password);
+    const { error } = await signIn(email, password);
 
     if (error) {
       toast.error(error.message);
@@ -91,13 +91,13 @@ const Auth = () => {
             <TabsContent value="login">
               <form onSubmit={handleSignIn} className="space-y-4">
                 <div className="space-y-2">
-                  <Label htmlFor="username">اسم المستخدم</Label>
+                  <Label htmlFor="email">البريد الإلكتروني</Label>
                   <Input
-                    id="username"
-                    type="text"
-                    placeholder="admin"
-                    value={username}
-                    onChange={(e) => setUsername(e.target.value)}
+                    id="email"
+                    type="email"
+                    placeholder="admin@masdar.local"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
                     required
                   />
                 </div>
