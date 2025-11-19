@@ -2,6 +2,8 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { calculateAmounts } from "@/lib/supabase";
@@ -20,6 +22,7 @@ export const AddEntryForm = ({ userId, onSuccess }: AddEntryFormProps) => {
     amount_net: "",
     status: "مدفوع",
     location: "Saudi Arabia" as "Saudi Arabia" | "Jordan",
+    disable_vat: false,
   });
   const [loading, setLoading] = useState(false);
 
@@ -34,7 +37,7 @@ export const AddEntryForm = ({ userId, onSuccess }: AddEntryFormProps) => {
       return;
     }
 
-    const { sar_net, vat, gross } = calculateAmounts(originalAmount, formData.currency);
+    const { sar_net, vat, gross } = calculateAmounts(originalAmount, formData.currency, formData.disable_vat);
 
     const { error } = await supabase.from("finance_entries").insert({
       user_id: userId,
@@ -47,6 +50,7 @@ export const AddEntryForm = ({ userId, onSuccess }: AddEntryFormProps) => {
       amount_gross: gross,
       status: formData.status,
       location: formData.location,
+      disable_vat: formData.disable_vat,
     });
 
     if (error) {
@@ -61,6 +65,7 @@ export const AddEntryForm = ({ userId, onSuccess }: AddEntryFormProps) => {
         amount_net: "",
         status: "مدفوع",
         location: "Saudi Arabia",
+        disable_vat: false,
       });
       onSuccess();
     }
@@ -120,6 +125,18 @@ export const AddEntryForm = ({ userId, onSuccess }: AddEntryFormProps) => {
         onChange={(e) => setFormData({ ...formData, amount_net: e.target.value })}
         required
       />
+      {formData.type === "expense" && (
+        <div className="flex items-center gap-2">
+          <Checkbox
+            id="disable_vat"
+            checked={formData.disable_vat}
+            onCheckedChange={(checked) => setFormData({ ...formData, disable_vat: checked as boolean })}
+          />
+          <Label htmlFor="disable_vat" className="text-sm cursor-pointer">
+            بدون ضريبة
+          </Label>
+        </div>
+      )}
       <Select value={formData.status} onValueChange={(value) => setFormData({ ...formData, status: value })}>
         <SelectTrigger>
           <SelectValue />
