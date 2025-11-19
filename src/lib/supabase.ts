@@ -14,6 +14,7 @@ export interface FinanceEntry {
   status: "مدفوع" | "معلق" | "غير مدفوع";
   location: "Saudi Arabia" | "Jordan";
   created_at: string;
+  disable_vat: boolean;
 }
 
 export interface FinanceFilters {
@@ -27,7 +28,8 @@ export interface FinanceFilters {
 
 export const calculateAmounts = (
   originalAmount: number,
-  currency: string
+  currency: string,
+  disableVat: boolean = false
 ): { sar_net: number; vat: number; gross: number } => {
   let sar_net = originalAmount;
 
@@ -48,8 +50,8 @@ export const calculateAmounts = (
       break;
   }
 
-  // VAT calculation (15% only for SAR)
-  const vat = currency === "SAR" ? sar_net * 0.15 : 0;
+  // VAT calculation (15% only for SAR, unless disabled)
+  const vat = (currency === "SAR" && !disableVat) ? sar_net * 0.15 : 0;
   const gross = sar_net + vat;
 
   return { sar_net, vat, gross };
@@ -83,6 +85,7 @@ export const deleteEntry = async (entryId: string, entry: FinanceEntry) => {
       status: entry.status,
       location: entry.location,
       deleted_by: user.id,
+      disable_vat: entry.disable_vat,
     });
 
   if (insertError) return { error: insertError };

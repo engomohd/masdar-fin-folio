@@ -22,6 +22,7 @@ export type Database = {
           date: string
           deleted_at: string
           deleted_by: string
+          disable_vat: boolean
           id: string
           location: string
           original_entry_id: string
@@ -38,6 +39,7 @@ export type Database = {
           date: string
           deleted_at?: string
           deleted_by: string
+          disable_vat?: boolean
           id?: string
           location: string
           original_entry_id: string
@@ -54,6 +56,7 @@ export type Database = {
           date?: string
           deleted_at?: string
           deleted_by?: string
+          disable_vat?: boolean
           id?: string
           location?: string
           original_entry_id?: string
@@ -87,6 +90,7 @@ export type Database = {
           created_at: string
           currency: string
           date: string
+          disable_vat: boolean
           id: string
           location: string
           project_name: string
@@ -101,6 +105,7 @@ export type Database = {
           created_at?: string
           currency: string
           date: string
+          disable_vat?: boolean
           id?: string
           location: string
           project_name: string
@@ -115,6 +120,7 @@ export type Database = {
           created_at?: string
           currency?: string
           date?: string
+          disable_vat?: boolean
           id?: string
           location?: string
           project_name?: string
