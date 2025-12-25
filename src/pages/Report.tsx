@@ -9,6 +9,7 @@ import { FinanceFilters } from "@/components/FinanceFilters";
 import { FinanceTable } from "@/components/FinanceTable";
 import { FinanceSummary } from "@/components/FinanceSummary";
 import { Pagination } from "@/components/Pagination";
+import { Download } from "lucide-react";
 import masdarLogo from "@/assets/masdar-logo.png";
 
 type Period = "current_month" | "last_month" | "last_3_months" | "last_6_months" | "current_year" | "last_year";
@@ -176,6 +177,94 @@ const Report = () => {
     setCurrentPage(1);
   };
 
+  const handleExport = async () => {
+    if (!userId) return;
+
+    // Calculate date range based on period
+    const now = new Date();
+    let dateFrom = "";
+    let dateTo = "";
+
+    switch (period) {
+      case "current_month":
+        dateFrom = new Date(now.getFullYear(), now.getMonth(), 1).toISOString().split('T')[0];
+        dateTo = new Date(now.getFullYear(), now.getMonth() + 1, 0).toISOString().split('T')[0];
+        break;
+      case "last_month":
+        dateFrom = new Date(now.getFullYear(), now.getMonth() - 1, 1).toISOString().split('T')[0];
+        dateTo = new Date(now.getFullYear(), now.getMonth(), 0).toISOString().split('T')[0];
+        break;
+      case "last_3_months":
+        dateFrom = new Date(now.getFullYear(), now.getMonth() - 2, 1).toISOString().split('T')[0];
+        dateTo = new Date(now.getFullYear(), now.getMonth() + 1, 0).toISOString().split('T')[0];
+        break;
+      case "last_6_months":
+        dateFrom = new Date(now.getFullYear(), now.getMonth() - 5, 1).toISOString().split('T')[0];
+        dateTo = new Date(now.getFullYear(), now.getMonth() + 1, 0).toISOString().split('T')[0];
+        break;
+      case "current_year":
+        dateFrom = new Date(now.getFullYear(), 0, 1).toISOString().split('T')[0];
+        dateTo = new Date(now.getFullYear(), 11, 31).toISOString().split('T')[0];
+        break;
+      case "last_year":
+        dateFrom = new Date(now.getFullYear() - 1, 0, 1).toISOString().split('T')[0];
+        dateTo = new Date(now.getFullYear() - 1, 11, 31).toISOString().split('T')[0];
+        break;
+    }
+
+    // Fetch all data for export (without pagination)
+    let query = supabase
+      .from("finance_entries")
+      .select("*")
+      .eq("user_id", userId)
+      .gte("date", dateFrom)
+      .lte("date", dateTo)
+      .order("date", { ascending: false });
+
+    if (filters.date_from) query = query.gte("date", filters.date_from);
+    if (filters.date_to) query = query.lte("date", filters.date_to);
+    if (filters.type) query = query.eq("type", filters.type);
+    if (filters.currency) query = query.eq("currency", filters.currency);
+    if (filters.location) query = query.eq("location", filters.location);
+
+    const { data, error } = await query;
+
+    if (error) {
+      toast.error("فشل في تصدير البيانات: " + error.message);
+      return;
+    }
+
+    if (!data || data.length === 0) {
+      toast.error("لا توجد بيانات للتصدير");
+      return;
+    }
+
+    // Create CSV content
+    const headers = ["التاريخ", "اسم المشروع", "النوع", "المبلغ الصافي", "الضريبة", "المبلغ الإجمالي", "العملة", "الموقع", "الحالة"];
+    const rows = data.map((entry) => [
+      entry.date,
+      entry.project_name,
+      entry.type === "income" ? "إيراد" : "مصروف",
+      entry.amount_net,
+      entry.vat_amount,
+      entry.amount_gross,
+      entry.currency,
+      entry.location,
+      entry.status
+    ]);
+
+    const csvContent = "\uFEFF" + [headers, ...rows].map(row => row.join(",")).join("\n");
+    const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = `تقرير_${period}_${new Date().toISOString().split('T')[0]}.csv`;
+    link.click();
+    URL.revokeObjectURL(url);
+
+    toast.success("تم تصدير التقرير بنجاح");
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-secondary/5 to-primary/5" dir="rtl">
       <div className="container mx-auto p-4 space-y-6">
@@ -199,21 +288,27 @@ const Report = () => {
 
         {/* Period Selector */}
         <div className="bg-card rounded-lg p-4 shadow-sm">
-          <div className="flex items-center gap-4">
-            <label className="text-sm font-medium">الفترة الزمنية:</label>
-            <Select value={period} onValueChange={(value) => { setPeriod(value as Period); setCurrentPage(1); }}>
-              <SelectTrigger className="w-[200px]">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="current_month">الشهر الحالي</SelectItem>
-                <SelectItem value="last_month">الشهر الماضي</SelectItem>
-                <SelectItem value="last_3_months">آخر 3 أشهر</SelectItem>
-                <SelectItem value="last_6_months">آخر 6 أشهر</SelectItem>
-                <SelectItem value="current_year">السنة الحالية</SelectItem>
-                <SelectItem value="last_year">السنة الماضية</SelectItem>
-              </SelectContent>
-            </Select>
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-4">
+              <label className="text-sm font-medium">الفترة الزمنية:</label>
+              <Select value={period} onValueChange={(value) => { setPeriod(value as Period); setCurrentPage(1); }}>
+                <SelectTrigger className="w-[200px]">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="current_month">الشهر الحالي</SelectItem>
+                  <SelectItem value="last_month">الشهر الماضي</SelectItem>
+                  <SelectItem value="last_3_months">آخر 3 أشهر</SelectItem>
+                  <SelectItem value="last_6_months">آخر 6 أشهر</SelectItem>
+                  <SelectItem value="current_year">السنة الحالية</SelectItem>
+                  <SelectItem value="last_year">السنة الماضية</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <Button onClick={handleExport} variant="outline" className="gap-2">
+              <Download className="h-4 w-4" />
+              تصدير CSV
+            </Button>
           </div>
         </div>
 
