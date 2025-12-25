@@ -226,6 +226,9 @@ const Report = () => {
     if (filters.type) query = query.eq("type", filters.type);
     if (filters.currency) query = query.eq("currency", filters.currency);
     if (filters.location) query = query.eq("location", filters.location);
+    if (filters.search) {
+      query = query.or(`project_name.ilike.%${filters.search}%,amount_net.eq.${parseFloat(filters.search) || 0},amount_gross.eq.${parseFloat(filters.search) || 0}`);
+    }
 
     const { data, error } = await query;
 
